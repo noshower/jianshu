@@ -135,6 +135,9 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss">
 @import '../common/scss/base.scss';
+body {
+  background:white;
+}
 #login,#enter{
   padding:0 pxToRem(50);
   h1 {
@@ -158,11 +161,15 @@ export default {
         }
           i {
             margin:0 pxToRem(20);
+            font-size:0;
             img {
               height:pxToRem(30);
             }
           }
           input {
+            height:pxToRem(30);
+            font-size:pxToRem(30);
+            line-height:1;
             @extend %flexItem;
           }
       }

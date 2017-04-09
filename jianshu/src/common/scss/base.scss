@@ -18,3 +18,10 @@ $baseFontSize: 75 !default;
 @function pxToRem($px) {
     @return $px / $baseFontSize * 1rem;
 }
+
+//背景图片
+%backgroundImage {
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+}
