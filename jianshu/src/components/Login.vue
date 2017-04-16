@@ -94,8 +94,8 @@ export default {
             alert(res.data.message);
             this.isLogin=false;
           }else{
-            alert('注册成功');
-
+             alert('注册成功');
+             location.href="/#/main";
           }
       });
     },
@@ -123,7 +123,7 @@ export default {
             alert(res.data.message);
             this.password = '';
           }else{
-            alert(res.data.message);
+            alert('登录成功');
             location.href="/#/main";
           }
       });
@@ -145,6 +145,7 @@ body {
     color:rgb(220,142,104);
     padding-top:pxToRem(200);
     padding-bottom:pxToRem(80);
+    text-align:center;
   }
   .form {
       border:1px solid #ccc;

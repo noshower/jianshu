@@ -11,6 +11,7 @@
     "test": "npm run e2e"
   },
   "dependencies": {
+    "better-scroll": "^0.1.15",
     "vue": "^2.2.2",
     "vue-router": "^2.2.0",
     "vue-slide": "^1.1.1"
