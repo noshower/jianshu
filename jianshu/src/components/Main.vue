@@ -10,7 +10,7 @@
             <div class="swiper-pagination"></div>
         </div>
         <div class="articles"  >
-            <div class="article" v-for="article in articles">
+            <router-link :to="{path:'/article',query:{id:article.id}}" :key="article.id" class="article" v-for="article in articles">
                 <div class="article-info">
                     <div class="author-info">
                         <img class="author-head" :src="article.avatar" alt="">
@@ -26,9 +26,9 @@
                         <span class="like-num">喜欢 {{article.likeNum}}</span>
                     </div>
                 </div>
-                <div class="article-image" v-bind:style="{backgroundImage:'url('+article.mainPicture+')'}">
+                <div class="article-image" v-bind:style="{backgroundImage:'url(http:'+article.mainPicture+')'}">
                 </div>
-            </div>
+            </router-link>
             <div v-show="!hasData" class="no-data">
                 亲，没有更多文章了！
             </div>

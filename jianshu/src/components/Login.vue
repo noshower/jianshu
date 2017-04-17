@@ -144,7 +144,7 @@ body {
   padding:0 pxToRem(50);
   h1 {
     font-size:pxToRem(80);
-    color:rgb(220,142,104);
+    color:#ea6f5a;
     padding-top:pxToRem(200);
     padding-bottom:pxToRem(80);
     text-align:center;
@@ -197,7 +197,7 @@ body {
     }
     .item1 {
       text-align:right;
-      color:rgb(220,142,104);
+      color:#ea6f5a;
     }
     .item2 {
       width:1px;
