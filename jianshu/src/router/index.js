@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 import { baseUrl } from '../common/js/config.js';
+import { getToken } from '../common/js/common.js';
 import axios from 'axios';
 // import Login from '@/components/Login';
 // import Main from '@/components/Main';
@@ -16,6 +17,11 @@ const Main = resolve => {
         resolve(require('@/components/Main.vue'))
     })
 };
+const Article = resolve => {
+    require.ensure(['@/components/Article.vue'], () => {
+        resolve(require('@/components/Article.vue'))
+    })
+};
 const router = new Router({
     routes: [{
         path: '/login',
@@ -25,22 +31,24 @@ const router = new Router({
         path: '/main',
         name: 'Main',
         component: Main
+    }, {
+        path: '/article',
+        name: 'Article',
+        component: Article
     }]
 });
-// router.beforeEach((to, from, next) => {
-//     if (to.name.toLocaleUpperCase() !== 'LOGIN') {
-//         axios.get(baseUrl + '/user/signinRequired').then((res) => {
-//             console.log(res.data)
-//             if (res.data.code != 200) {
-//                 console.log('login');
-//                 next('/login');
-//             } else {
-//                 next();
-//             }
-
-//         });
-//     } else {
-//         next();
-//     }
-// });
+router.beforeEach((to, from, next) => {
+    if (to.name.toLocaleUpperCase() !== 'LOGIN') {
+        //如果token无效，那么就重新登录
+        axios.get(baseUrl + '/authorization?token=' + getToken()).then((res) => {
+            if (res.data.code != 200) {
+                next('/login');
+            } else {
+                next();
+            }
+        });
+    } else {
+        next();
+    }
+});
 export default router;

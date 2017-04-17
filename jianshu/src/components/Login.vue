@@ -50,6 +50,7 @@
 <script>
 import Axios from 'axios';
 import {baseUrl} from '../common/js/config.js';
+import {setToken} from '../common/js/common.js';
 export default {
   name: 'Login',
   data () {
@@ -124,6 +125,7 @@ export default {
             this.password = '';
           }else{
             alert('登录成功');
+            setToken(res.data.token);
             location.href="/#/main";
           }
       });

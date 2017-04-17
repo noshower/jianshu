@@ -41,6 +41,7 @@
 import axios from 'axios';
 import BScroll from 'better-scroll';
 import {baseUrl} from '../common/js/config.js';
+import {getToken} from '../common/js/common.js';
 export default {
   data () {
     return {
@@ -51,7 +52,7 @@ export default {
     }
   },
   created:function(){
-    axios.get(baseUrl+'/getActivities?status=1').then((res)=>{
+    axios.get(baseUrl+'/activities?status=1&&token='+getToken()).then((res)=>{
        this.imgs = res.data.activities; 
        this.$nextTick(()=>{
          var swiper = new Swiper('.swiper-container', {
@@ -64,7 +65,7 @@ export default {
   },
   methods:{
       getArticleList(){
-        axios.get(baseUrl+'/getArticleList?pageSize=10&pageNum='+this.pageNum).then((res)=>{
+        axios.get(baseUrl+'/articles?pageSize=10&pageNum='+this.pageNum+'&token='+getToken()).then((res)=>{
                 let data= res.data;
                 this.articles.push(...data.message.data);
                 if(data.message.length<data.pageSize){
