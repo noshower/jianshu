@@ -6,16 +6,25 @@
         <img :src="avatar" alt="">
       </div>
       <div class="author">
-        <div class="name">{{author}}</div>
+        <div class="name">{{originator}}</div>
         <span class="label">作者</span>
       </div>
 			<span class="attention">+关注</span>
 		</div>
 		<div class="meta">
-			<span>16.03.24 00:02</span>&nbsp;&nbsp;<span>字数1938</span>&nbsp;&nbsp;<span>阅读1666</span>
+			<span>{{publishTime}}</span>&nbsp;&nbsp;<span>字数{{wordage}}</span>&nbsp;&nbsp;<span>阅读{{readNum}}</span>
 		</div>
 		<div class="content" v-html="compiledMarkdown"></div>
-    <div class="comment-list"></div>
+    <div class="comment-list">
+      <div class="like-btn">
+          <div  v-if="isSupport"  class="like-img support">
+          </div>
+          <div  v-else="isSupport"  class="like-img" v-on:click="support">
+          </div>
+          <p class="like-num">{{likeNum}}</p>
+          <p class="copyright">© 著作权归作者所有</p>
+      </div>
+    </div>
 	</div>
 </template>
 <script>
@@ -30,8 +39,14 @@
 			return {
 				input: '解决',
         title:'',
-        author:'',
-        avatar:''
+        originator:'',
+        avatar:'',
+        wordage:0,
+        isSupport:false,
+        readNum:0,
+        likeNum:0,
+        publishTime:0,
+        isClick:false
 			}
 		},
 		created: function() {
@@ -41,15 +56,39 @@
         const data = res.data.data;
 				this.input =data.content.trim();
         this.title =data.title;
-        this.author = data.author;
+        this.originator = data.originator;
         this.avatar = data.avatar;
+        this.wordage=data.wordage;
+        this.isSupport = data.isSupport;
+        this.likeNum = data.likeNum;
+        this.readNum = data.readNum;
+        this.publishTime =data.publishTime.replace('*','');
 			});
 		},
 		computed: {
 			compiledMarkdown: function() {
 				return marked(this.input, { sanitize: true })
 			}
-		}
+		},
+    methods:{
+      support(){
+        if(this.isClick){
+          return false;
+        }
+        this.isClick =true;
+        axios.post(baseUrl+'/support?token=' + getToken(),{
+            articleId:this.$route.query.id
+        }).then((res)=>{
+          this.isClick = false;
+          if(res.data.code !=200){
+            alert(res.data.message);
+          }else{
+            this.isSupport = true;
+            this.likeNum ++;
+          }
+        });
+      }
+    }
 	}
 </script>
 <style lang="scss">
@@ -108,6 +147,31 @@
     font-size: pxToRem(26);
     color: #b1b1b1;
   }
+
+  .like-btn {
+    @extend %flexCenter;
+    .like-img {
+      width:pxToRem(54);
+      height:pxToRem(54);
+      margin-right:pxToRem(10);
+      background-image:url('../assets/like.png');
+      @extend %backgroundImage;
+      &.support {
+         background-image:url('../assets/like-a.png');
+      }
+    }
+    .like-num {
+      font-size:0.4rem;
+      color:#979797;
+    }
+    .copyright {
+      @extend %flexItem;
+      text-align: right;
+      font-size: pxToRem(26);
+      color: #e6e6e6;
+    }
+  }
+
 	.content {
 		color: #2f2f2f;
 		font-size: 0.4266rem;

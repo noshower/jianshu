@@ -26,7 +26,7 @@
                         <span class="like-num">喜欢 {{article.likeNum}}</span>
                     </div>
                 </div>
-                <div class="article-image" v-bind:style="{backgroundImage:'url(http:'+article.mainPicture+')'}">
+                <div class="article-image" v-bind:style="{backgroundImage:'url('+article.mainPicture+')'}">
                 </div>
             </router-link>
             <div v-show="!hasData" class="no-data">
