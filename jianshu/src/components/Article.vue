@@ -17,7 +17,7 @@
 		<div class="content" v-html="compiledMarkdown"></div>
     <div class="comment-list">
       <div class="like-btn">
-          <div  v-if="isSupport"  class="like-img support">
+          <div  v-if="isSupport"  class="like-img support" v-on:click="support">
           </div>
           <div  v-else="isSupport"  class="like-img" v-on:click="support">
           </div>
@@ -76,15 +76,21 @@
           return false;
         }
         this.isClick =true;
-        axios.post(baseUrl+'/support?token=' + getToken(),{
+        axios.post(baseUrl+'/articles/support?token=' + getToken(),{
             articleId:this.$route.query.id
         }).then((res)=>{
           this.isClick = false;
           if(res.data.code !=200){
             alert(res.data.message);
           }else{
-            this.isSupport = true;
-            this.likeNum ++;
+						//status ===0 表示取消点赞,1表示点赞
+            if(res.data.status === 0){
+							this.isSupport = false;
+           		this.likeNum --;
+						}else{
+							this.isSupport = true;
+           		this.likeNum ++;
+						}
           }
         });
       }
