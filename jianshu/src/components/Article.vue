@@ -24,6 +24,25 @@
           <p class="like-num">{{likeNum}}</p>
           <p class="copyright">© 著作权归作者所有</p>
       </div>
+			<div class="comment-action">
+				<span>评论32</span>
+				<span>只看作者</span>
+				<span>按时间倒序</span>
+			</div>
+			<div class="comment">
+			  <div class="info">
+					<div class="info-head">
+					</div>
+					<div class="info-date">
+						<p>965588</p>
+						<p>21楼 04.20 15:04</p>
+					</div>
+					<div class="info-action">
+						<span></span>
+						<span></span>
+					</div>
+				</div>
+			</div>
     </div>
 	</div>
 </template>
@@ -137,8 +156,8 @@
   .article-info .label {
     padding: pxToRem(2) pxToRem(4);
     font-size: pxToRem(24);
-    color: #e78170;
-    border: 1px solid #e78170;
+    color: #ea6f5a;
+    border: 1px solid #ea6f5a;
     border-radius: pxToRem(6);
   }
   .article-info .attention {
@@ -148,6 +167,23 @@
     background:#42c02e;
     border-radius: pxToRem(6);
   }
+	.comment-list{
+		position: relative;
+		padding-bottom: pxToRem(30);
+		&:before{
+			content:'';
+			position: absolute;
+			left: 0;
+			bottom:0;
+			height:1px;
+			width:100%;
+			transform: scaleY(0.5);
+			background:#ccc;
+		}
+	}
+	.comment-action {
+		padding: pxToRem(20) 0;
+	}
   .meta {
     margin-top: pxToRem(20);
     font-size: pxToRem(26);

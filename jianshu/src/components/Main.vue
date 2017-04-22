@@ -3,24 +3,24 @@
       <div >
         <div class="swiper-container">
             <div class="swiper-wrapper">
-                <div class="swiper-slide" v-for="img in imgs" v-bind:style="{backgroundImage:'url('+img+')'}">
+                <div class="swiper-slide" v-for="img in imgs" v-bind:style="{backgroundImage:'url('+img.cover+'@338h_750w_1e_1c.src)'}">
                 </div>
             </div>
             <!-- Add Pagination -->
             <div class="swiper-pagination"></div>
         </div>
         <div class="articles"  >
-            <router-link :to="{path:'/article',query:{id:article.id}}" :key="article.id" class="article" v-for="article in articles">
+            <router-link :to="{path:'/article',query:{id:article._id}}" :key="article.id" class="article" v-for="article in articles">
                 <div class="article-info">
                     <div class="author-info">
                         <img class="author-head" :src="article.avatar" alt="">
-                        <span class="author-nick">{{article.author}}</span>
+                        <span class="author-nick">{{article.originator}}</span>
                     </div>
                     <div class="article-title">
                         {{article.title}}
                     </div>
                     <div class="other-info">
-                        <span class="type">{{article.type}}</span>
+                        <span class="type">{{article.projects[0]}}</span>
                         <span class="read-num">阅读 {{article.readNum}}</span>
                         <span class="comments-num">评论 {{article.commentsNum}}</span>
                         <span class="like-num">喜欢 {{article.likeNum}}</span>
@@ -54,6 +54,7 @@ export default {
   created:function(){
     axios.get(baseUrl+'/activities?status=1&&token='+getToken()).then((res)=>{
        this.imgs = res.data.activities; 
+       console.log(res.data);
        this.$nextTick(()=>{
          var swiper = new Swiper('.swiper-container', {
                     pagination: '.swiper-pagination',
@@ -175,8 +176,8 @@ export default {
                 .type {
                     padding:pxToRem(5) pxToRem(10);
                     font-size:pxToRem(20);
-                    color:rgb(220,142,104);
-                    border:1px solid rgb(220,142,104);
+                    color:#ea6f5a;
+                    border:1px solid #ea6f5a;
                     border-radius:pxToRem(2);
                     margin-right:pxToRem(5);
                 }
