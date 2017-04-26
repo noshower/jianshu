@@ -25,33 +25,60 @@
           <p class="copyright">© 著作权归作者所有</p>
       </div>
 			<div class="comment-action">
-				<span>评论32</span>
-				<span>只看作者</span>
-				<span>按时间倒序</span>
+				<span class="comment-num">评论 32</span>
+				<span class="only-author">只看作者</span>
+				<span class="sort">
+					<select >
+						<option value="1">按时间倒序</option>
+						<option value="2">按时间正序</option>
+						<option value="3">按点赞排序</option>
+					</select>
+					<img src="../assets/downward.png"/>
+				</span>
 			</div>
-			<div class="comment">
+			<div v-for="item in comments" class="comment">
 			  <div class="info">
 					<div class="info-head">
 					</div>
 					<div class="info-date">
-						<p>965588</p>
-						<p>21楼 04.20 15:04</p>
+						<p class="nickname">{{item.fromId.name}}</p>
+						<p class="info-time">{{item.createTime}}</p>
 					</div>
-					<div class="info-action">
-						<span></span>
-						<span></span>
-					</div>
+						<span class="action-comment"></span>
+						<span class="action-support"></span>
+				</div>
+				<div class="comment-content">
+					{{item.content}}
 				</div>
 			</div>
     </div>
+		<div class="footer-wrap">
+				<div class="footer">
+						<div class="write-wrap" v-on:click="showReport">
+							<span class="write-img"></span>
+							<span class="write-text">写下你的评论...</span>
+						</div>
+						<div class="comment-img">
+							<span class="comment-num">11</span>
+						</div>
+						<div class="like-img">
+							<span class="like-num">11</span>
+						</div>
+				</div>
+		</div>
+		<div v-show="isReport" class="report-wrap">
+			<div class="report">
+					<textarea v-model="reportContent"></textarea>
+					<div class="report-submit" v-on:click = "submit">发表评论</div>
+			</div>
+		</div>
 	</div>
 </template>
 <script>
 	import axios from 'axios';
 	import marked from 'marked';
 	import { baseUrl } from '../common/js/config.js';
-	import { setToken } from '../common/js/common.js';
-	import { getToken } from '../common/js/common.js';
+	import { setToken,getToken,getLocalTime} from '../common/js/common.js';
 	export default {
 		name: 'Article',
 		data() {
@@ -65,12 +92,14 @@
         readNum:0,
         likeNum:0,
         publishTime:0,
-        isClick:false
+        isClick:false,
+				isReport:false,
+				reportContent:'',
+				comments:[]
 			}
 		},
 		created: function() {
 			const id = this.$route.query.id;
-			console.log(id);
 			axios.get(baseUrl + '/articles/' + id + '?token=' + getToken()).then((res) => {
         const data = res.data.data;
 				this.input =data.content.trim();
@@ -82,6 +111,14 @@
         this.likeNum = data.likeNum;
         this.readNum = data.readNum;
         this.publishTime =data.publishTime.replace('*','');
+			});
+			axios.get(baseUrl+'/articles/comment?token=' + getToken()).then((res)=>{
+				const data = res.data.message.data;
+				data.map((item,index)=>{
+					item.createTime = getLocalTime(item.createTime);
+					return item;
+				});
+				this.comments = data;
 			});
 		},
 		computed: {
@@ -112,7 +149,23 @@
 						}
           }
         });
-      }
+      },
+			showReport(){
+				this.isReport = true;
+			},
+			submit(){
+				//发送评论
+				axios.post(baseUrl+'/articles/comment?token=' + getToken(),{
+					content:this.reportContent,
+					articleId:this.$route.query.id
+				}).then((res)=>{
+					if(res.data.code !=200){
+						alert(res.data.message);
+					}else{
+						this.isReport = false;
+					}
+				});
+			}
     }
 	}
 </script>
@@ -169,7 +222,7 @@
   }
 	.comment-list{
 		position: relative;
-		padding-bottom: pxToRem(30);
+		padding-bottom: pxToRem(90);
 		&:before{
 			content:'';
 			position: absolute;
@@ -180,9 +233,94 @@
 			transform: scaleY(0.5);
 			background:#ccc;
 		}
-	}
-	.comment-action {
-		padding: pxToRem(20) 0;
+			.comment-action {
+				position: relative;
+				padding: pxToRem(20) 0;
+				margin:pxToRem(50) 0;
+				&:before{
+					content:'';
+					position: absolute;
+					top:0;
+					left:0;
+					height:1px;
+					width:100%;
+					transform:scaleY(0.5);
+					background:#ccc;
+				}
+				&:after{
+					content:'';
+					position: absolute;
+					bottom:0;
+					left:0;
+					height:1px;
+					width:100%;
+					transform:scaleY(0.5);
+					background:#ccc;
+				}
+				@extend %flexCenter;
+				.comment-num{
+					color:#ea6f5a;
+					display: inline-block;
+					margin-right:pxToRem(10);
+				};
+				.only-author{
+					font-size:pxToRem(20);
+					padding:pxToRem(5);
+					border:1px solid #ccc;
+					color:#ccc;
+				}
+				.sort {
+					position: absolute;
+					right:0;
+					img {
+						width: 0.3rem;
+						vertical-align: middle;
+					}
+				}
+		}
+		.comment {
+			.info {
+				@extend %flexCenter;
+				.info-head {
+					height:0.6rem;
+					width:0.6rem;
+					background-image:url('../assets/like.png');
+					border-radius: 50%;
+					margin-right: pxToRem(10);
+					@extend %backgroundImage;
+				}
+				.info-date {
+					@extend %flexItem;
+					.nickname{
+						font-size:pxToRem(24);
+						color:#999;
+					}
+					.info-time{
+							font-size:pxToRem(20);
+							color:#999;
+					}
+				}
+				.action-comment,.action-support {
+					display: inline-block;
+					width:pxToRem(30);
+					height:pxToRem(30);
+					@extend %backgroundImage;
+				}
+				.action-comment {
+					margin-right:pxToRem(30);
+					background-image:url(../assets/comment.png);
+				}
+				.action-support {
+					background-image:url(../assets/support.png);
+				}
+			}
+			.comment-content {
+				padding-top:pxToRem(20);
+				color:777;
+				font-size: pxToRem(26);
+				line-height: 1.5;
+			}
+		}
 	}
   .meta {
     margin-top: pxToRem(20);
@@ -213,7 +351,103 @@
       color: #e6e6e6;
     }
   }
-
+	.footer-wrap {
+			position:fixed;
+			bottom:0;
+			left:0;
+			width:100%;
+			background:white;
+			padding: pxToRem(10);
+			&:before{
+				content:'';
+				position: absolute;
+				top:0;
+				left:0;
+				width: 100%;
+				height: 1px;
+				background:#ccc;
+				-webkit-transform: scaleY(0.5);
+				transform:scaleY(0.5);
+			}
+			.footer{
+				@extend %flexCenter;
+				.write-wrap{
+					width:pxToRem(400);
+					height:pxToRem(50);
+					border: 1px solid #ccc;
+					border-radius: pxToRem(4);
+					.write-img {
+						display: inline-block;
+						height:pxToRem(50);
+						width:pxToRem(50);
+						vertical-align: middle;
+						background-image:url('../assets/write.png');
+						@extend %backgroundImage;
+						background-size: pxToRem(25) pxToRem(25);
+					}
+					.write-text {
+						display: inline-block;
+						height:pxToRem(50);
+						line-height:pxToRem(50);
+						color:#aaa;
+					}
+				}
+				.comment-img,.like-img{
+					position: relative;
+					height:pxToRem(35);
+					width:pxToRem(35);
+					margin: 0 pxToRem(50);
+					@extend %backgroundImage;
+					background-image: url('../assets/comment.png');
+				}
+				.like-img {
+					margin-right:pxToRem(50);
+					margin-left: 0;
+					background-image: url('../assets/like-a.png');
+				}
+				.comment-img .comment-num,.like-img .like-num {
+					position: absolute;
+					right:pxToRem(-20);
+					top:pxToRem(-10);
+					font-size: pxToRem(20);
+					color: #aaa;
+				}
+			}
+	}
+	.report-wrap {
+		position: fixed;
+		top:0;
+		left:0;
+		width:100%;
+		height:100vh;
+		background: rgba(0,0,0,0.7);
+		.report {
+			position:relative;
+			padding: pxToRem(50);
+			background:white;
+			textarea{
+				width:100%;
+				height:pxToRem(200);
+				padding: pxToRem(10);
+				margin-bottom: pxToRem(40);
+				border: 1px solid #ccc;
+				border-radius: 4px;
+				resize: none;
+			}
+			.report-submit {
+				width: pxToRem(120);
+				line-height: 1.5;
+				text-align: center;
+				font-size: pxToRem(24);
+				color: white;
+				background:#42c02e;
+				border-radius: pxToRem(4);
+				position: absolute;
+				bottom:pxToRem(20);
+				right:pxToRem(50);
+			}
+		}
+	}
 	.content {
 		color: #2f2f2f;
 		font-size: 0.4266rem;
